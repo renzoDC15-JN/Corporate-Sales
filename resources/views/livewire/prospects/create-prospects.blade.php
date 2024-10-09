@@ -1,7 +1,7 @@
 <div class="flex justify-center items-center min-h-screen">
     <div class="w-full max-w-lg bg-white p-4 rounded-lg">
         <div class=" flex justify-center mb-4">
-            <img class="h-auto w-40 lg:w-1/2" src="CompanyLogo.png" alt="CompanyLogo.png">
+            <img class="h-auto w-40 lg:w-1/2" src="/CompanyLogo.png" alt="CompanyLogo.png">
         </div>
         <form wire:submit="create" class="w-full">
 

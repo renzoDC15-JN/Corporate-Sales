@@ -5,13 +5,20 @@ namespace App\Models;
 use Homeful\Contacts\Models\Contact;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Propaganistas\LaravelPhone\PhoneNumber;
 
 class Prospects extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
+
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+
     protected $fillable = [
+        'id',
         'prospect_id',
         'last_name',
         'first_name',
@@ -28,6 +35,9 @@ class Prospects extends Model
     protected static function booted(): void
     {
         static::creating(function ($prospect) {
+            if (empty($prospect->id)) {
+                $prospect->id = Str::uuid(); // Assign a UUID to the 'id' column
+            }
             $latest = static::latest('created_at')->first();
 
             if ($latest) {

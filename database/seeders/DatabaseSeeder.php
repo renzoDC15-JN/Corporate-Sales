@@ -14,7 +14,20 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            PhilippineStandardGeographicalCodeSeeder::class,
+            SuffixSeeder::class,
+            CivilStatusSeeder::class,
+
             UserSeeder::class,
+            CurrentPostionSeeder::class,
+            EmploymentStatusSeeder::class,
+            EmploymentTypeSeeder::class,
+            TenureSeeder::class,
+            WorkIndustrySeeder::class,
+            YearsOfOperationSeeder::class,
+            HomeOwnershipSeeder::class,
+            NationalitySeeder::class,
+            CountrySeeder::class
         ]);
     }
 }

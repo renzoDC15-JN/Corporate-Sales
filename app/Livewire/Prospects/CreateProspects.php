@@ -3,6 +3,7 @@
 namespace App\Livewire\Prospects;
 
 use App\Models\Prospects;
+use App\Notifications\ProspectRegistered;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -95,11 +96,11 @@ class CreateProspects extends Component implements HasForms
         $data = $this->form->getState();
 
         $record = Prospects::create($data);
+        $record->notify(new ProspectRegistered($record));
 
         $this->form->model($record)->saveRelationships();
 
         $this->dispatch('open-modal', id: 'success-modal');
-
 
 //        dd($this->data);
 
