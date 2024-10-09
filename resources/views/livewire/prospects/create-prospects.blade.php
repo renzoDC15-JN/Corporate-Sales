@@ -22,7 +22,8 @@
         sticky-header
         width="md"
         class="rounded-md"
-        :autofocus="false">
+        :autofocus="false"
+        x-on:close-modal.window="$wire.closeModal()">
         <x-slot name="heading">
             Registration Successful
         </x-slot>

@@ -98,16 +98,18 @@ class CreateProspects extends Component implements HasForms
 
         $this->form->model($record)->saveRelationships();
 
-        $this->data =[];
         $this->dispatch('open-modal', id: 'success-modal');
+
+
 //        dd($this->data);
 
     }
 
     public function closeModal()
     {
-        $this->dispatch('close-modal', id: 'success-modal');
+        $this->data =[];
     }
+
 
 
     #[Layout('layouts.app')]
