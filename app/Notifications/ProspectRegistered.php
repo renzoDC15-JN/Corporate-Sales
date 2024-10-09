@@ -43,7 +43,6 @@ class ProspectRegistered extends Notification
             ->line('Company: ' . $this->prospect->company)
             ->line('Position: ' . $this->prospect->position_title)
             ->line('We will be in touch with you soon!')
-            ->action('Client Information Sheet', url('/client-information-sheet/'.$this->id))
             ->line('Thank you for using our application!');
     }
 
