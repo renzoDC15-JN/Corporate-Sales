@@ -32,6 +32,7 @@ class ProspectsResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+
             ->schema([
                 Forms\Components\Section::make()
                 ->schema([
@@ -71,9 +72,10 @@ class ProspectsResource extends Resource
                         ->maxLength(255)
                         ->required()
                         ->columnSpan(3),
-                    Forms\Components\TextInput::make('hloan')
+                    Forms\Components\ToggleButtons::make('hloan')
                         ->label('HLOAN')
-                        ->maxLength(255)
+                        ->boolean()
+                        ->inline(true)
                         ->required()
                         ->columnSpan(3),
                     Forms\Components\TextInput::make('email')
@@ -118,6 +120,10 @@ class ProspectsResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('10')
+            ->defaultPaginationPageOption(50)
+            ->extremePaginationLinks()
+            ->defaultSort('created_at','desc')
             ->columns([
                 Tables\Columns\TextColumn::make('prospect_id')
                     ->label('Prospect ID')
@@ -127,7 +133,7 @@ class ProspectsResource extends Resource
                     ->formatStateUsing(function (Model $record){
                         return $record->last_name.' '.$record->name_extension.', '.$record->first_name.' '.$record->middle_name;
                     })
-                    ->searchable(),
+                    ->searchable(['last_name','first_name','middle_name','name_extension']),
                 Tables\Columns\TextColumn::make('company')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('position_title')
