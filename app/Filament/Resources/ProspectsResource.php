@@ -139,11 +139,14 @@ class ProspectsResource extends Resource
                 Tables\Columns\TextColumn::make('position_title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('salary')
-                    ->numeric()
+                    ->formatStateUsing(fn (string $state): string => '₱' . number_format($state, 2))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('mid')
+                    ->label('PAGIBIG MID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('hloan')
+                Tables\Columns\IconColumn::make('hloan')
+                    ->boolean()
+                    ->label('Exsiting Loan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
