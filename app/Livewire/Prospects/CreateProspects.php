@@ -92,13 +92,13 @@ class CreateProspects extends Component implements HasForms
 
     public function create(): void
     {
-//        $data = $this->form->getState();
-//
-//        $record = Prospects::create($data);
-//
-//        $this->form->model($record)->saveRelationships();
-//
-//        $this->data =[];
+        $data = $this->form->getState();
+
+        $record = Prospects::create($data);
+
+        $this->form->model($record)->saveRelationships();
+
+        $this->data =[];
         $this->dispatch('open-modal', id: 'success-modal');
 //        dd($this->data);
 
