@@ -70,7 +70,7 @@ class CreateProspects extends Component implements HasForms
                         ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
                             $livewire->validateOnly($component->getStatePath());
                         })
-                        ->unique(ignoreRecord: true,table: Contact::class,column: 'email')
+                        ->unique(ignoreRecord: true,table: Prospects::class,column: 'email')
                         ->required(),
                     Forms\Components\TextInput::make('mobile_number')
                         ->label('Mobile')

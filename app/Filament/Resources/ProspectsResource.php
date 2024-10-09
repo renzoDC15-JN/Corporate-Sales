@@ -85,7 +85,7 @@ class ProspectsResource extends Resource
                         ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
                             $livewire->validateOnly($component->getStatePath());
                         })
-                        ->unique(ignoreRecord: true,table: Contact::class,column: 'email')
+                        ->unique(ignoreRecord: true,table: Prospects::class,column: 'email')
                         ->required()
                         ->columnSpan(3),
                     Forms\Components\TextInput::make('mobile_number')
