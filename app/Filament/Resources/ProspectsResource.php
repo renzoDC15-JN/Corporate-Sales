@@ -105,7 +105,9 @@ class ProspectsResource extends Resource
                     ->schema([
                         Forms\Components\Section::make()
                             ->schema([
-                                Placeholder::make('prospect_id'),
+                                Placeholder::make('prospect_id')
+                                    ->label('Prospect ID')
+                                    ->content(fn($record)=>$record->prospect_id),
                                 Placeholder::make('created_at')
                                     ->content(fn ($record) => $record?->created_at?->diffForHumans() ?? new HtmlString('&mdash;')),
                                 Placeholder::make('updated_at')
