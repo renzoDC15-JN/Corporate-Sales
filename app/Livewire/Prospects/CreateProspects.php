@@ -20,6 +20,7 @@ class CreateProspects extends Component implements HasForms
     use InteractsWithForms;
 
     public ?array $data = [];
+
     public function mount(): void
     {
         $this->form->fill();

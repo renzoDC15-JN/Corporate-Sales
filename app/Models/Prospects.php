@@ -31,12 +31,19 @@ class Prospects extends Model
         'hloan',
         'email',
         'mobile_number',
-        'preferred_project'
+        'preferred_project',
+        'contact_id'
     ];
     public function preferredProject()
     {
         return $this->belongsTo(Project::class, 'preferred_project', 'code');
     }
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class, 'contact_id', 'id');
+    }
+
     protected static function booted(): void
     {
         static::creating(function ($prospect) {
