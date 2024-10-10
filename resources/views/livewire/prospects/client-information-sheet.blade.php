@@ -35,3 +35,29 @@
     </x-filament::modal>
 
 </div>
+<script>
+    function updateScreenSize() {
+        const screenWidth = window.innerWidth;
+        let screenSize = 'desktop';
+
+        if (screenWidth < 768) {
+            screenSize = 'mobile';
+        } else if (screenWidth >= 768 && screenWidth < 1024) {
+            screenSize = 'md';
+        }
+
+        console.log(`Screen size is: ${screenSize}`);
+
+        // Dispatch the event using $wire if Livewire is loaded
+        if (window.Livewire) {
+            this.$wire.dispatchSelf('screenSizeUpdated', { screenSize });
+        }
+    }
+
+    // Normal document load
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Document is fully loaded');
+        updateScreenSize(); // Trigger screen size detection on normal document load
+    });
+
+</script>

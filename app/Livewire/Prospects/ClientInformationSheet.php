@@ -41,9 +41,17 @@ class ClientInformationSheet extends Component implements HasForms
     public ?array $data = [];
 
     public Prospects $record;
+    public string $screenSize = 'desktop'; // Default value is 'desktop'
+
+    #[On('screenSizeUpdated')]
+    public function onScreenSizeUpdated($event): void
+    {
+        $this->screenSize = $event['screenSize'];
+    }
 
     public function mount(): void
     {
+
         $this->form->fill();
     }
 
@@ -681,8 +689,7 @@ class ClientInformationSheet extends Component implements HasForms
                                         ->columnSpan(3),
                                 ])->columns(12)->columnSpanFull(),
                         ])->hidden(fn (Get $get): bool => $get('buyer.civil_status')!=CivilStatus::where('description','Married')->first()->code &&  $get('buyer.civil_status')!=null),
-
-                    ]),
+                    ])->visible(fn():bool => $this->screenSize === 'desktop' || $this->screenSize === 'md'),
 
             ])
             ->statePath('data');
