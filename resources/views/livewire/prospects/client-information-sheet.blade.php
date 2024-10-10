@@ -4,7 +4,6 @@
             <img class="h-auto w-40 lg:w-1/4" src="/CompanyLogo.png" alt="CompanyLogo.png">
         </div>
         <form wire:submit="save" class="w-full">
-
             {{ $this->form }}
             <div class="flex justify-center ">
                 <x-filament::button type="submit" class="mt-4  text-white py-2 px-4 rounded mx-auto w-60">

@@ -1,11 +1,15 @@
 <div class="flex justify-center items-center min-h-screen">
 
     <div class="w-full max-w-lg bg-white p-4 rounded-lg">
-        <div class=" flex justify-center mb-4">
+        <div class=" flex justify-center ">
             <img class="h-auto w-40 lg:w-full" src="/RLI & RYN.png" alt="CompanyLogo.png">
         </div>
         <form wire:submit="create" class="w-full">
-
+            <div  class="flex justify-center ">
+                <h2 class="text-xl font-bold leading-tight text-gray-800 mb-2">
+                    Pre-Registration Form
+                </h2>
+            </div>
             {{ $this->form }}
             <div class="flex justify-center ">
 
