@@ -1,7 +1,7 @@
 <div class="flex justify-center items-center min-h-screen">
     <div class="w-full bg-white p-4 rounded-lg mx-10">
         <div class=" flex justify-center mb-4">
-            <img class="h-auto w-40 lg:w-1/4" src="/CompanyLogo.png" alt="CompanyLogo.png">
+            <img class="h-auto w-full lg:w-1/2 " src="/RLI & RYN.png" alt="CompanyLogo.png">
         </div>
         <form wire:submit="save" class="w-full">
             {{ $this->form }}
@@ -33,31 +33,30 @@
 
         </div>
     </x-filament::modal>
-
 </div>
 <script>
+
     function updateScreenSize() {
         const screenWidth = window.innerWidth;
         let screenSize = 'desktop';
 
-        if (screenWidth < 768) {
+        if (screenWidth < 769) {
             screenSize = 'mobile';
-        } else if (screenWidth >= 768 && screenWidth < 1024) {
+        } else if (screenWidth >= 769 && screenWidth < 1024) {
             screenSize = 'md';
         }
-
-        console.log(`Screen size is: ${screenSize}`);
-
-        // Dispatch the event using $wire if Livewire is loaded
-        if (window.Livewire) {
-            this.$wire.dispatchSelf('screenSizeUpdated', { screenSize });
-        }
+        @this.set('screenSize',screenSize);
     }
 
     // Normal document load
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('Document is fully loaded');
-        updateScreenSize(); // Trigger screen size detection on normal document load
+        setTimeout(() => {
+            updateScreenSize(); // Trigger screen size detection after 200ms delay
+        }, 50);
     });
+
+    window.addEventListener('resize', function(event) {
+        updateScreenSize();
+    }, true);
 
 </script>
