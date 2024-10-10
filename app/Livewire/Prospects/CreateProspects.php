@@ -5,6 +5,7 @@ namespace App\Livewire\Prospects;
 use App\Models\Prospects;
 use App\Notifications\ProspectRegistered;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -85,6 +86,11 @@ class CreateProspects extends Component implements HasForms
                             $livewire->validateOnly($component->getStatePath());
                         })
                         ->required(),
+                        Select::make('preferred_project')
+                            ->label('Preferred Project')
+                            ->native(false)
+                            ->relationship('preferredProject', 'description')
+                            ->required(),
                         Forms\Components\Checkbox::make('i_agree')
                             ->required()
                             ->label(new HtmlString('By clicking, you agree to us collecting and using your information as outlined in our <a href="http://event-registration.test/privacy-policy" target="_blank" class="text-blue-600 underline">Privacy Policy</a>.'))

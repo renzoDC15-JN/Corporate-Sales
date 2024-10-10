@@ -100,6 +100,12 @@ class ProspectsResource extends Resource
                         })
                         ->required()
                         ->columnSpan(3),
+                    Select::make('preferred_project')
+                        ->label('Preferred Project')
+                        ->native(false)
+                        ->relationship('preferredProject', 'description') // 'description' can be the display field
+                        ->columnSpan(3)
+                        ->required(),
                 ])->columns(12)->columnSpan(2),
                 Forms\Components\Group::make()
                     ->schema([

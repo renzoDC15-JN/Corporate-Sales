@@ -31,7 +31,12 @@ class Prospects extends Model
         'hloan',
         'email',
         'mobile_number',
+        'preferred_project'
     ];
+    public function preferredProject()
+    {
+        return $this->belongsTo(Project::class, 'preferred_project', 'code');
+    }
     protected static function booted(): void
     {
         static::creating(function ($prospect) {
@@ -67,4 +72,5 @@ class Prospects extends Model
             throw new \InvalidArgumentException('Mobile must be a string or an instance of PhoneNumber.');
         }
     }
+
 }

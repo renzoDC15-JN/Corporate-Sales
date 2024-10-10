@@ -57,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ])->plugins([
                 FilamentRecordSwitcherPlugin::make(),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                FilamentRecordSwitcherPlugin::make(),
             ]);
     }
 }
