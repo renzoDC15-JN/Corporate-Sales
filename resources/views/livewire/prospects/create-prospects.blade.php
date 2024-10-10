@@ -6,7 +6,7 @@
         </div>
         <form wire:submit="create" class="w-full">
             <div  class="flex justify-center ">
-                <h2 class="text-xl font-bold leading-tight text-gray-800 mb-2">
+                <h2 class="text-xl font-bold leading-tight text-gray-800 mb-4">
                     Pre-Registration Form
                 </h2>
             </div>

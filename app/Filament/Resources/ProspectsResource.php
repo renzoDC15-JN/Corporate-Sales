@@ -23,7 +23,7 @@ class ProspectsResource extends Resource
     protected static ?string $model = Prospects::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'last_name';
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
