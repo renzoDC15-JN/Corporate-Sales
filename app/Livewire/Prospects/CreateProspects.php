@@ -10,6 +10,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Homeful\Contacts\Models\Contact;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 
@@ -84,6 +85,11 @@ class CreateProspects extends Component implements HasForms
                             $livewire->validateOnly($component->getStatePath());
                         })
                         ->required(),
+                        Forms\Components\Checkbox::make('i_agree')
+                            ->required()
+                            ->label(new HtmlString('By clicking, you agree to us collecting and using your information as outlined in our <a href="http://event-registration.test/privacy-policy" target="_blank" class="text-blue-600 underline">Privacy Policy</a>.'))
+                            ->inlineLabel(false)
+                            ->columnSpanFull(),
                 ])->columns(1)->columnSpanFull(),
 
             ])
