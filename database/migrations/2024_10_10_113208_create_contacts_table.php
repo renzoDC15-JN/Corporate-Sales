@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::dropIfExists('contacts');
+//        Schema::dropIfExists('contacts');
         Schema::create('contacts', function (Blueprint $table) {
              $table->uuid('id')->primary();
              $table->string('reference_code')->nullable()->unique();
