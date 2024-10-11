@@ -1400,9 +1400,13 @@ class ClientInformationSheet extends Component implements HasForms
         }
         $validated = $validator->validated();
         $contact = $action->run($validated);
-        $contact->idImage=storage_path('app/public/' . $data['valid_id']);
-        $contact->payslipImage=storage_path('app/public/' . $data['payslip']);
-        $this->record->contact_id=Contact::where('reference_code', $uuid)->first()->id;
+        $contact =Contact::where('reference_code', $uuid)->first();
+//        $contact->idImage=storage_path('app/public/' . $data['valid_id']);
+//        $contact->payslipImage=storage_path('app/public/' . $data['payslip']);
+        $contact->idImage = config('app.url') . '/' . $data['valid_id'];
+        $contact->payslipImage = config('app.url') . '/' . $data['payslip'];
+        $contact->save();
+        $this->record->contact_id=$contact->id;
         $this->record->save();
         $this->dispatch('open-modal', id: 'success-modal');
     }
