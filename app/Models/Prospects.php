@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Propaganistas\LaravelPhone\PhoneNumber;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Prospects extends Model
+class Prospects extends Model implements HasMedia
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, InteractsWithMedia;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -32,7 +34,9 @@ class Prospects extends Model
         'email',
         'mobile_number',
         'preferred_project',
-        'contact_id'
+        'contact_id',
+//        'idImage',
+//        'payslipImage'
     ];
     public function preferredProject()
     {

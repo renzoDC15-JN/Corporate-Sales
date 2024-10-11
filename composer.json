@@ -11,6 +11,7 @@
         "bezhansalleh/filament-shield": "^3.2",
         "filament/filament": "^3.2",
         "filament/forms": "^3.2",
+        "filament/spatie-laravel-media-library-plugin": "^3.2",
         "howdu/filament-record-switcher": "^1.0",
         "jn-devops/contacts": "^v1.5.31",
         "laravel/framework": "^11.9",
