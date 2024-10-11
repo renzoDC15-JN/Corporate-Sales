@@ -60,6 +60,7 @@ class ClientInformationSheet extends Component implements HasForms
 
     public function form(Form $form): Form
     {
+
         return $form
             ->live()
             ->reactive()
@@ -127,6 +128,7 @@ class ClientInformationSheet extends Component implements HasForms
                                     ->label('Nationality')
                                     ->required()
                                     ->native(false)
+                                    ->searchable()
                                     ->options(Nationality::all()->pluck('description','code'))
                                     ->columnSpan(3),
                             ])->columns(12)->columnSpanFull(),
@@ -621,6 +623,7 @@ class ClientInformationSheet extends Component implements HasForms
                                     ->label('Suffix')
                                     ->required()
                                     ->native(false)
+                                    ->searchable()
                                     ->options(NameSuffix::all()->pluck('description','code'))
                                     ->columnSpan(2),
 
