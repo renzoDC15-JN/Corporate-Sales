@@ -813,12 +813,12 @@ class ProspectsResource extends Resource
                                     ->content(fn($record)=>$record->prospect_id??''),
                                 Placeholder::make('IdImage')
                                     ->label('Valid Id')
-                                    ->content(fn($record) =>$record->contact==null?'': new HtmlString(
+                                    ->content(fn($record) =>$record->contact==null?'No File Found': new HtmlString(
                                         '<a href="' . $record->contact->getFirstMediaUrl('id-images') . '" target="_blank">View Valid Id</a>'
                                     )),
                                 Placeholder::make('payslipImage')
                                     ->label('Payslip')
-                                    ->content(fn($record) =>$record->contact==null?'':  new HtmlString(
+                                    ->content(fn($record) =>$record->contact==null?'No File Found':  new HtmlString(
                                         '<a href="' . $record->contact->getFirstMediaUrl('payslip-images') . '" target="_blank">View Payslip</a>'
                                     )),
                                 Placeholder::make('created_at')
