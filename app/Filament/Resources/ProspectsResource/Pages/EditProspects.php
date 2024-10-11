@@ -18,10 +18,11 @@ class EditProspects extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['contact'] = $this->record->contact->toArray();
+//        $data['contact'] = $this->record->contact->toArray();
+        $data['contact'] = $this->record->contact==null?[]:$this->record->contact->toArray();
 //        $contact_data = ContactData::fromModel(new Contact($data));
-        $buyer_address_present = collect($this->record->contact['addresses'])->firstWhere('type', 'present') ?? $this->record->contact['addresses'][0];
-        $buyer_address_permanent = collect($this->record->contact['addresses'])->firstWhere('type', 'permanent') ?? $this->record->contact['addresses'][0];
+        $buyer_address_present =$data['contact']==[]?[]: collect($data['contact']['addresses'])->firstWhere('type', 'present') ?? $this->record->contact['addresses'][0];
+        $buyer_address_permanent =$data['contact']==[]?[]:  collect($data['contact']['addresses'])->firstWhere('type', 'permanent') ?? $this->record->contact['addresses'][0];
         $buyer_address_present_filtered = array_diff_key($buyer_address_present, ['type' => '']);
         $buyer_address_permanent_filtered = array_diff_key($buyer_address_permanent, ['type' => '']);
         $same_as_permanent = $buyer_address_present_filtered === $buyer_address_permanent_filtered;
@@ -29,7 +30,7 @@ class EditProspects extends EditRecord
         $buyer_address_present['same_as_permanent']=$same_as_permanent;
         $data['buyer_address_present']=$buyer_address_present;
         $data['buyer_address_permanent']=$buyer_address_permanent;
-        $buyer_employment = collect($this->record->contact['employment'])->firstWhere('type', 'buyer') ?? [];
+        $buyer_employment = $data['contact']==[]?[]: collect($data['contact']['employment'])->firstWhere('type', 'buyer') ?? [];
         $data['buyer_employment'] =$buyer_employment;
 //        $data['idImage']=$this->record->contact->getFirstMedia('id-images');
 //        $data['payslipImage']=$this->record->contact->getFirstMedia('payslip-images');
