@@ -52,8 +52,8 @@ class EditProspects extends EditRecord
             'hloan' => $data['hloan'],
             'email' => $data['email'],
             'mobile_number' => $data['mobile_number'],
-            'idImage'=> storage_path('app/public/' . $data['idImage']),
-            'payslipImage'=> storage_path('app/public/' . $data['payslipImage']),
+//            'idImage'=> storage_path('app/public/' . $data['idImage']),
+//            'payslipImage'=> storage_path('app/public/' . $data['payslipImage']),
         ]);
 
         $record->contact->update([
@@ -83,13 +83,13 @@ class EditProspects extends EditRecord
         $record->contact['employment']=[
             $data['buyer_employment']
         ];
-//        $record->contact->idImage = config('app.url') . '/' . $data['idImage'];
-//        $record->contact->payslipImage = config('app.url') . '/' . $data['payslipImage'];
-        $record->contact->addMedia(storage_path('app/public/' . $data['idImage']))
-            ->toMediaCollection('id-images');
-
-        $record->contact->addMedia(storage_path('app/public/' . $data['payslipImage']))
-            ->toMediaCollection('payslip-images');
+        //        $record->contact->idImage = config('app.url') . '/' . $data['idImage'];
+        //        $record->contact->payslipImage = config('app.url') . '/' . $data['payslipImage'];
+//        $record->contact->addMedia(storage_path('app/public/' . $data['idImage']))
+//            ->toMediaCollection('id-images');
+//
+//        $record->contact->addMedia(storage_path('app/public/' . $data['payslipImage']))
+//            ->toMediaCollection('payslip-images');
 
         $record->contact->save();
         $record->save();
