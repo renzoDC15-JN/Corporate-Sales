@@ -7,7 +7,7 @@
         <form wire:submit="create" class="w-full">
             <div  class="flex justify-center ">
                 <h2 class="text-xl font-bold leading-tight text-gray-800 mb-4">
-                    Pre-Registration Form
+                    {{$this->company}}
                 </h2>
             </div>
             {{ $this->form }}

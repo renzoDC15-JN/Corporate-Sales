@@ -15,8 +15,10 @@ class PreRegister extends Component implements HasForms
     use InteractsWithForms;
     public ?array $data = [];
 
-    public function mount(): void
+    public $company ;
+    public function mount(String $company): void
     {
+        $this->company = $company;
         $this->form->fill();
     }
     public function form(Form $form): Form
@@ -40,10 +42,6 @@ class PreRegister extends Component implements HasForms
                 TextInput::make('name_extension')
                     ->label('Extension Name')
                     ->maxLength(255)
-                    ->columnSpan(3),
-                TextInput::make('company')
-                    ->maxLength(255)
-                    ->required()
                     ->columnSpan(3),
                 TextInput::make('position_title')
                     ->label('Position/Title')

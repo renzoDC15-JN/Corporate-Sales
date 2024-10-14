@@ -47,21 +47,17 @@ class ClientInformationSheet extends Component implements HasForms
 
     public Prospects $record;
     public string $screenSize=''; // Default value is 'desktop'
-    public bool $has_data = false;
 
-    public function mount(Prospects $prospect): void
+    public $company;
+
+    public function mount(String $company): void
     {
-        $this->record = $prospect;
-        if(!empty($this->record->contact_id)){
-            $this->has_data=true;
-//            $this->dispatch('open-modal', id: 'hasdata-modal');
-        }
+        $this->company=$company;
         $this->form->fill();
     }
 
     public function form(Form $form): Form
     {
-
         return $form
             ->live()
             ->reactive()
@@ -122,6 +118,15 @@ class ClientInformationSheet extends Component implements HasForms
                                     ->columnSpan(3),
                                 DatePicker::make('buyer.date_of_birth')
                                     ->label('Date of Birth')
+                                    ->hint(function ($state): string {
+                                        if ($state) {
+                                            $dateOfBirth = \Carbon\Carbon::parse($state);
+                                            $age = $dateOfBirth->age;
+                                            return "Age: $age years";
+                                        }
+                                        return '';
+                                    })
+                                    ->hintColor('primary')
                                     ->required()
                                     ->native(false)
                                     ->columnSpan(3),
@@ -132,6 +137,20 @@ class ClientInformationSheet extends Component implements HasForms
                                     ->searchable()
                                     ->options(Nationality::all()->pluck('description','code'))
                                     ->columnSpan(3),
+                                Forms\Components\ToggleButtons::make('has_pagibig_number')
+                                    ->label('Has PAG-IBIG Number?')
+                                    ->inline(true)
+                                    ->required()
+                                    ->boolean()
+                                    ->live()
+                                    ->columnSpan(3),
+                                Forms\Components\ToggleButtons::make('hloan')
+                                    ->label('Existing housing loan with PAG-IBIG?')
+                                    ->inline(true)
+                                    ->required()
+                                    ->boolean()
+                                    ->columnSpan(3),
+
                             ])->columns(12)->columnSpanFull(),
                             \Filament\Forms\Components\Fieldset::make('Contact Information')
                                 ->schema([
@@ -160,21 +179,21 @@ class ClientInformationSheet extends Component implements HasForms
                                         })
                                         ->columnSpan(3),
 
-                                    Forms\Components\TextInput::make('buyer.other_mobile')
-                                        ->label('Other Mobile')
-                                        ->prefix('+63')
-                                        ->regex("/^[0-9]+$/")
-                                        ->minLength(10)
-                                        ->maxLength(10)
-                                        ->live()
-                                        ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
-                                            $livewire->validateOnly($component->getStatePath());
-                                        })
-                                        ->columnSpan(3),
-
-                                    Forms\Components\TextInput::make('buyer.landline')
-                                        ->label('Landline')
-                                        ->columnSpan(3),
+//                                    Forms\Components\TextInput::make('buyer.other_mobile')
+//                                        ->label('Other Mobile')
+//                                        ->prefix('+63')
+//                                        ->regex("/^[0-9]+$/")
+//                                        ->minLength(10)
+//                                        ->maxLength(10)
+//                                        ->live()
+//                                        ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
+//                                            $livewire->validateOnly($component->getStatePath());
+//                                        })
+//                                        ->columnSpan(3),
+//
+//                                    Forms\Components\TextInput::make('buyer.landline')
+//                                        ->label('Landline')
+//                                        ->columnSpan(3),
                                 ])->columns(12)->columnSpanFull(),
                             //Address
                             \Filament\Forms\Components\Fieldset::make('Address')
@@ -454,11 +473,16 @@ class ClientInformationSheet extends Component implements HasForms
                                         ->columnSpan(3),
                                     TextInput::make('buyer_employment.id.pag_ibig')
                                         ->label('PAG-IBIG Number')
-                                        ->required()
+                                        ->required(fn (Get $get): bool=>$get('has_pagibig_number')==true||$get('has_pagibig_number')==null)
                                         ->maxLength(255)
                                         ->columnSpan(3),
                                     TextInput::make('buyer_employment.id.sss_gsis')
                                         ->label('SSS/GSIS Number')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->columnSpan(3),
+                                    TextInput::make('employee_id_number')
+                                        ->label('Employee ID Number')
                                         ->required()
                                         ->maxLength(255)
                                         ->columnSpan(3),
@@ -467,146 +491,146 @@ class ClientInformationSheet extends Component implements HasForms
 
                             ])->columns(12)->columnSpanFull(),
                             //Employer
-                            Forms\Components\Fieldset::make('Employer/Business')->schema([
-                                TextInput::make('buyer_employment.employer.employer_business_name')
-                                    ->label('Employer / Business Name')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->columnSpan(3),
-                                TextInput::make('buyer_employment.employer.contact_person')
-                                    ->label('Contact Person')
-                                    ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                    ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                    ->maxLength(255)
-                                    ->columnSpan(3),
-                                TextInput::make('buyer_employment.employer.employer_email')
-                                    ->label('Email')
-                                    ->email()
-                                    ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                    ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                    ->maxLength(255)
-                                    ->columnSpan(3),
-                                TextInput::make('buyer_employment.employer.mobile')
-                                    ->label('Contact Number')
-                                    ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                    ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                    ->prefix('+63')
-                                    ->regex("/^[0-9]+$/")
-                                    ->minLength(10)
-                                    ->maxLength(10)
-                                    ->live()
-//                                        ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
-////                                            $livewire->validateOnly($component->getStatePath());
+//                            Forms\Components\Fieldset::make('Employer/Business')->schema([
+//                                TextInput::make('buyer_employment.employer.employer_business_name')
+//                                    ->label('Employer / Business Name')
+//                                    ->required()
+//                                    ->maxLength(255)
+//                                    ->columnSpan(3),
+//                                TextInput::make('buyer_employment.employer.contact_person')
+//                                    ->label('Contact Person')
+//                                    ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                    ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                    ->maxLength(255)
+//                                    ->columnSpan(3),
+//                                TextInput::make('buyer_employment.employer.employer_email')
+//                                    ->label('Email')
+//                                    ->email()
+//                                    ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                    ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                    ->maxLength(255)
+//                                    ->columnSpan(3),
+//                                TextInput::make('buyer_employment.employer.mobile')
+//                                    ->label('Contact Number')
+//                                    ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                    ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                    ->prefix('+63')
+//                                    ->regex("/^[0-9]+$/")
+//                                    ->minLength(10)
+//                                    ->maxLength(10)
+//                                    ->live()
+////                                        ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
+//////                                            $livewire->validateOnly($component->getStatePath());
+////                                        })
+//                                    ->columnSpan(3),
+//                                TextInput::make('buyer_employment.employer.year_established')
+//                                    ->label('Year Established')
+//                                    ->required()
+//                                    ->numeric()
+//                                    ->columnSpan(3),
+////                                        Select::make('employment.employer.years_of_operation')
+////                                            ->label('Years of Operation')
+////                                            ->required()
+////                                            ->native(false)
+////                                            ->options(YearsOfOperation::all()->pluck('description','code'))
+////                                            ->columnSpan(3),
+//                                Forms\Components\Fieldset::make('Address')->schema([
+//                                    Group::make()
+//                                        ->schema([
+//                                            Select::make('buyer_employment.employer.address.country')
+//                                                ->searchable()
+//                                                ->options(Country::all()->pluck('description','code'))
+//                                                ->native(false)
+//                                                ->live()
+//                                                ->required()
+//                                                ->columnSpan(3),
+//                                        ])
+//                                        ->columns(12)
+//                                        ->columnSpanFull(),
+//                                    Select::make('buyer_employment.employer.address.region')
+//                                        ->searchable()
+//                                        ->options(PhilippineRegion::all()->pluck('region_description','region_code'))
+//                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                        ->native(false)
+//                                        ->live()
+//                                        ->afterStateUpdated(function(Set $set, $state){
+//                                            $set('buyer_employment.employer.address.province','');
+//                                            $set('buyer_employment.employer.address.city','');
+//                                            $set('buyer_employment.employer.address.barangay','');
 //                                        })
-                                    ->columnSpan(3),
-                                TextInput::make('buyer_employment.employer.year_established')
-                                    ->label('Year Established')
-                                    ->required()
-                                    ->numeric()
-                                    ->columnSpan(3),
-//                                        Select::make('employment.employer.years_of_operation')
-//                                            ->label('Years of Operation')
-//                                            ->required()
-//                                            ->native(false)
-//                                            ->options(YearsOfOperation::all()->pluck('description','code'))
-//                                            ->columnSpan(3),
-                                Forms\Components\Fieldset::make('Address')->schema([
-                                    Group::make()
-                                        ->schema([
-                                            Select::make('buyer_employment.employer.address.country')
-                                                ->searchable()
-                                                ->options(Country::all()->pluck('description','code'))
-                                                ->native(false)
-                                                ->live()
-                                                ->required()
-                                                ->columnSpan(3),
-                                        ])
-                                        ->columns(12)
-                                        ->columnSpanFull(),
-                                    Select::make('buyer_employment.employer.address.region')
-                                        ->searchable()
-                                        ->options(PhilippineRegion::all()->pluck('region_description','region_code'))
-                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                        ->native(false)
-                                        ->live()
-                                        ->afterStateUpdated(function(Set $set, $state){
-                                            $set('buyer_employment.employer.address.province','');
-                                            $set('buyer_employment.employer.address.city','');
-                                            $set('buyer_employment.employer.address.barangay','');
-                                        })
-                                        ->columnSpan(3),
-                                    Select::make('buyer_employment.employer.address.province')
-                                        ->searchable()
-                                        ->options(fn (Get $get): Collection => PhilippineProvince::query()
-                                            ->where('region_code', $get('buyer_employment.employer.address.region'))
-                                            ->pluck('province_description', 'province_code'))
-                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                        ->native(false)
-                                        ->live()
-                                        ->afterStateUpdated(function(Set $set, $state){
-                                            $set('buyer_employment.employer.address.city','');
-                                            $set('buyer_employment.employer.address.barangay','');
-                                        })
-                                        ->columnSpan(3),
-                                    Select::make('buyer_employment.employer.address.city')
-                                        ->searchable()
-                                        ->options(fn (Get $get): Collection => PhilippineCity::query()
-                                            ->where('province_code', $get('buyer_employment.employer.address.province'))
-                                            ->pluck('city_municipality_description', 'city_municipality_code'))
-                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                        ->native(false)
-                                        ->live()
-                                        ->afterStateUpdated(function(Set $set, $state){
-                                            $set('buyer_employment.employer.address.barangay','');
-                                        })
-                                        ->columnSpan(3),
-                                    Select::make('buyer_employment.employer.address.barangay')
-                                        ->searchable()
-                                        ->options(fn (Get $get): Collection =>PhilippineBarangay::query()
-                                            ->where('region_code', $get('buyer_employment.employer.address.region'))
-//                                                    ->where('province_code', $get('buyer.address.present.province'))                                            ->where('province_code', $get('province'))
-                                            ->where('city_municipality_code', $get('buyer_employment.employer.address.city'))
-                                            ->pluck('barangay_description', 'barangay_code')
-                                        )
-                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                        ->native(false)
-                                        ->live()
-                                        ->columnSpan(3),
-                                    TextInput::make('buyer_employment.employer.address.address')
-                                        ->label(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
-                                        ->placeholder(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
-                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH')
-                                        ->autocapitalize('words')
-                                        ->maxLength(255)
-                                        ->live()
-                                        ->columnSpan(12),
-
-
-                                ])->columns(12)->columnSpanFull(),
-                            ])->columns(12)->columnSpanFull(),
-                            Forms\Components\Fieldset::make('Documents')
-                                ->schema([
-                                    FileUpload::make('valid_id')
-                                        ->label('Valid ID')
-                                        ->required(),
-                                    FileUpload::make('payslip')
-                                        ->label('Latest 1 month payslip')
-                                        ->required(),
-                                ])->columns(1),
-                            Forms\Components\Fieldset::make('Project')
-                                ->schema([
-                                    Select::make('preferred_project')
-                                        ->live()
-                                        ->label('Preferred Project')
-                                        ->required()
-                                        ->native(false)
-                                        ->options(Project::all()->pluck('description','code'))
-                                        ->columnSpan(3),
-                                ])->columnSpanFull()->columns(12),
+//                                        ->columnSpan(3),
+//                                    Select::make('buyer_employment.employer.address.province')
+//                                        ->searchable()
+//                                        ->options(fn (Get $get): Collection => PhilippineProvince::query()
+//                                            ->where('region_code', $get('buyer_employment.employer.address.region'))
+//                                            ->pluck('province_description', 'province_code'))
+//                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                        ->native(false)
+//                                        ->live()
+//                                        ->afterStateUpdated(function(Set $set, $state){
+//                                            $set('buyer_employment.employer.address.city','');
+//                                            $set('buyer_employment.employer.address.barangay','');
+//                                        })
+//                                        ->columnSpan(3),
+//                                    Select::make('buyer_employment.employer.address.city')
+//                                        ->searchable()
+//                                        ->options(fn (Get $get): Collection => PhilippineCity::query()
+//                                            ->where('province_code', $get('buyer_employment.employer.address.province'))
+//                                            ->pluck('city_municipality_description', 'city_municipality_code'))
+//                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                        ->native(false)
+//                                        ->live()
+//                                        ->afterStateUpdated(function(Set $set, $state){
+//                                            $set('buyer_employment.employer.address.barangay','');
+//                                        })
+//                                        ->columnSpan(3),
+//                                    Select::make('buyer_employment.employer.address.barangay')
+//                                        ->searchable()
+//                                        ->options(fn (Get $get): Collection =>PhilippineBarangay::query()
+//                                            ->where('region_code', $get('buyer_employment.employer.address.region'))
+////                                                    ->where('province_code', $get('buyer.address.present.province'))                                            ->where('province_code', $get('province'))
+//                                            ->where('city_municipality_code', $get('buyer_employment.employer.address.city'))
+//                                            ->pluck('barangay_description', 'barangay_code')
+//                                        )
+//                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                        ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                        ->native(false)
+//                                        ->live()
+//                                        ->columnSpan(3),
+//                                    TextInput::make('buyer_employment.employer.address.address')
+//                                        ->label(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
+//                                        ->placeholder(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
+//                                        ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH')
+//                                        ->autocapitalize('words')
+//                                        ->maxLength(255)
+//                                        ->live()
+//                                        ->columnSpan(12),
+//
+//
+//                                ])->columns(12)->columnSpanFull(),
+//                            ])->columns(12)->columnSpanFull(),
+//                            Forms\Components\Fieldset::make('Documents')
+//                                ->schema([
+//                                    FileUpload::make('valid_id')
+//                                        ->label('Valid ID')
+//                                        ->required(),
+//                                    FileUpload::make('payslip')
+//                                        ->label('Latest 1 month payslip')
+//                                        ->required(),
+//                                ])->columns(1),
+//                            Forms\Components\Fieldset::make('Project')
+//                                ->schema([
+//                                    Select::make('preferred_project')
+//                                        ->live()
+//                                        ->label('Preferred Project')
+//                                        ->required()
+//                                        ->native(false)
+//                                        ->options(Project::all()->pluck('description','code'))
+//                                        ->columnSpan(3),
+//                                ])->columnSpanFull()->columns(12),
                         ]),
                         //Spouse
                         Forms\Components\Tabs\Tab::make('Spouse')->schema([
@@ -767,13 +791,34 @@ class ClientInformationSheet extends Component implements HasForms
                                     ]),
                                 DatePicker::make('buyer.date_of_birth')
                                     ->label('Date of Birth')
+                                    ->hint(function ($state): string {
+                                        if ($state) {
+                                            $dateOfBirth = \Carbon\Carbon::parse($state);
+                                            $age = $dateOfBirth->age;
+                                            return "Age: $age years";
+                                        }
+                                        return '';
+                                    })
+                                    ->hintColor('primary')
                                     ->required()
                                     ->native(false),
                                 Select::make('buyer.nationality')
                                     ->label('Nationality')
                                     ->required()
                                     ->native(false)
+                                    ->searchable()
                                     ->options(Nationality::all()->pluck('description','code')),
+                                Forms\Components\ToggleButtons::make('has_pagibig_number')
+                                    ->label('Has PAG-IBIG Number')
+                                    ->inline(true)
+                                    ->required()
+                                    ->boolean()
+                                    ->live(),
+                                Forms\Components\ToggleButtons::make('hloan')
+                                    ->label('Existing housing loan with PAG-IBIG?')
+                                    ->inline(true)
+                                    ->required()
+                                    ->boolean(),
                                 Forms\Components\TextInput::make('buyer.email')
                                     ->label('Email')
                                     ->email()
@@ -797,19 +842,7 @@ class ClientInformationSheet extends Component implements HasForms
                                         $livewire->validateOnly($component->getStatePath());
                                     }),
 
-                                Forms\Components\TextInput::make('buyer.other_mobile')
-                                    ->label('Other Mobile')
-                                    ->prefix('+63')
-                                    ->regex("/^[0-9]+$/")
-                                    ->minLength(10)
-                                    ->maxLength(10)
-                                    ->live()
-                                    ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
-                                        $livewire->validateOnly($component->getStatePath());
-                                    }),
 
-                                Forms\Components\TextInput::make('buyer.landline')
-                                    ->label('Landline'),
                             ]),
                         Forms\Components\Fieldset::make('Buyer Present Address')->schema([
                             Select::make('buyer.address.present.ownership')
@@ -1056,115 +1089,119 @@ class ClientInformationSheet extends Component implements HasForms
                                     ->maxLength(255),
                                 TextInput::make('buyer_employment.id.pag_ibig')
                                     ->label('PAG-IBIG Number')
-                                    ->required()
+                                    ->required(fn (Get $get): bool=>$get('has_pagibig_number')==true||$get('has_pagibig_number')==null)
                                     ->maxLength(255),
                                 TextInput::make('buyer_employment.id.sss_gsis')
                                     ->label('SSS/GSIS Number')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('employee_id_number')
+                                    ->label('Employee ID Number')
                                     ->required()
                                     ->maxLength(255),
                             ]),
 
 
                         ]),
-                        Forms\Components\Fieldset::make('Buyer Employer/Business')->schema([
-                            TextInput::make('buyer_employment.employer.employer_business_name')
-                                ->label('Employer / Business Name')
-                                ->required()
-                                ->maxLength(255),
-                            TextInput::make('buyer_employment.employer.contact_person')
-                                ->label('Contact Person')
-                                ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                ->maxLength(255),
-                            TextInput::make('buyer_employment.employer.employer_email')
-                                ->label('Email')
-                                ->email()
-                                ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                ->maxLength(255),
-                            TextInput::make('buyer_employment.employer.mobile')
-                                ->label('Contact Number')
-                                ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
-                                ->prefix('+63')
-                                ->regex("/^[0-9]+$/")
-                                ->minLength(10)
-                                ->maxLength(10)
-                                ->live(),
-                            TextInput::make('buyer_employment.employer.year_established')
-                                ->label('Year Established')
-                                ->required()
-                                ->numeric(),
-                        ]),
-                        Forms\Components\Fieldset::make('Buyer Employment/Employer Address')->schema([
-                            Group::make()
-                                ->schema([
-                                    Select::make('buyer_employment.employer.address.country')
-                                        ->searchable()
-                                        ->options(Country::all()->pluck('description','code'))
-                                        ->native(false)
-                                        ->live()
-                                        ->required(),
-                                ])
-                                ->columns(12)
-                                ->columnSpanFull(),
-                            Select::make('buyer_employment.employer.address.region')
-                                ->searchable()
-                                ->options(PhilippineRegion::all()->pluck('region_description','region_code'))
-                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                ->native(false)
-                                ->live()
-                                ->afterStateUpdated(function(Set $set, $state){
-                                    $set('buyer_employment.employer.address.province','');
-                                    $set('buyer_employment.employer.address.city','');
-                                    $set('buyer_employment.employer.address.barangay','');
-                                }),
-                            Select::make('buyer_employment.employer.address.province')
-                                ->searchable()
-                                ->options(fn (Get $get): Collection => PhilippineProvince::query()
-                                    ->where('region_code', $get('buyer_employment.employer.address.region'))
-                                    ->pluck('province_description', 'province_code'))
-                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                ->native(false)
-                                ->live()
-                                ->afterStateUpdated(function(Set $set, $state){
-                                    $set('buyer_employment.employer.address.city','');
-                                    $set('buyer_employment.employer.address.barangay','');
-                                }),
-                            Select::make('buyer_employment.employer.address.city')
-                                ->searchable()
-                                ->options(fn (Get $get): Collection => PhilippineCity::query()
-                                    ->where('province_code', $get('buyer_employment.employer.address.province'))
-                                    ->pluck('city_municipality_description', 'city_municipality_code'))
-                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                ->native(false)
-                                ->live()
-                                ->afterStateUpdated(function(Set $set, $state){
-                                    $set('buyer_employment.employer.address.barangay','');
-                                }),
-                            Select::make('buyer_employment.employer.address.barangay')
-                                ->searchable()
-                                ->options(fn (Get $get): Collection =>PhilippineBarangay::query()
-                                    ->where('region_code', $get('buyer_employment.employer.address.region'))
-//                                                    ->where('province_code', $get('buyer.address.present.province'))                                            ->where('province_code', $get('province'))
-                                    ->where('city_municipality_code', $get('buyer_employment.employer.address.city'))
-                                    ->pluck('barangay_description', 'barangay_code')
-                                )
-                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
-                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
-                                ->native(false)
-                                ->live(),
-                            TextInput::make('buyer_employment.employer.address.address')
-                                ->label(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
-                                ->placeholder(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
-                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH')
-                                ->autocapitalize('words')
-                                ->maxLength(255)
-                                ->live(),
-                        ]),
+//                        Forms\Components\Fieldset::make('Buyer Employer/Business')->schema([
+//                            TextInput::make('buyer_employment.employer.employer_business_name')
+//                                ->label('Employer / Business Name')
+//                                ->required()
+//                                ->maxLength(255),
+//                            TextInput::make('buyer_employment.employer.contact_person')
+//                                ->label('Contact Person')
+//                                ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                ->maxLength(255),
+//                            TextInput::make('buyer_employment.employer.employer_email')
+//                                ->label('Email')
+//                                ->email()
+//                                ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                ->maxLength(255),
+//                            TextInput::make('buyer_employment.employer.mobile')
+//                                ->label('Contact Number')
+//                                ->required(fn (Get $get): bool =>   $get('buyer_employment.type')!=EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                ->hidden(fn (Get $get): bool =>   $get('buyer_employment.type')==EmploymentType::where('description','Self-Employed with Business')->first()->code)
+//                                ->prefix('+63')
+//                                ->regex("/^[0-9]+$/")
+//                                ->minLength(10)
+//                                ->maxLength(10)
+//                                ->live(),
+//                            TextInput::make('buyer_employment.employer.year_established')
+//                                ->label('Year Established')
+//                                ->required()
+//                                ->numeric(),
+//                        ]),
+//                        Forms\Components\Fieldset::make('Buyer Employment/Employer Address')->schema([
+//                            Group::make()
+//                                ->schema([
+//                                    Select::make('buyer_employment.employer.address.country')
+//                                        ->searchable()
+//                                        ->options(Country::all()->pluck('description','code'))
+//                                        ->native(false)
+//                                        ->live()
+//                                        ->required(),
+//                                ])
+//                                ->columns(12)
+//                                ->columnSpanFull(),
+//                            Select::make('buyer_employment.employer.address.region')
+//                                ->searchable()
+//                                ->options(PhilippineRegion::all()->pluck('region_description','region_code'))
+//                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                ->native(false)
+//                                ->live()
+//                                ->afterStateUpdated(function(Set $set, $state){
+//                                    $set('buyer_employment.employer.address.province','');
+//                                    $set('buyer_employment.employer.address.city','');
+//                                    $set('buyer_employment.employer.address.barangay','');
+//                                }),
+//                            Select::make('buyer_employment.employer.address.province')
+//                                ->searchable()
+//                                ->options(fn (Get $get): Collection => PhilippineProvince::query()
+//                                    ->where('region_code', $get('buyer_employment.employer.address.region'))
+//                                    ->pluck('province_description', 'province_code'))
+//                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                ->native(false)
+//                                ->live()
+//                                ->afterStateUpdated(function(Set $set, $state){
+//                                    $set('buyer_employment.employer.address.city','');
+//                                    $set('buyer_employment.employer.address.barangay','');
+//                                }),
+//                            Select::make('buyer_employment.employer.address.city')
+//                                ->searchable()
+//                                ->options(fn (Get $get): Collection => PhilippineCity::query()
+//                                    ->where('province_code', $get('buyer_employment.employer.address.province'))
+//                                    ->pluck('city_municipality_description', 'city_municipality_code'))
+//                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                ->native(false)
+//                                ->live()
+//                                ->afterStateUpdated(function(Set $set, $state){
+//                                    $set('buyer_employment.employer.address.barangay','');
+//                                }),
+//                            Select::make('buyer_employment.employer.address.barangay')
+//                                ->searchable()
+//                                ->options(fn (Get $get): Collection =>PhilippineBarangay::query()
+//                                    ->where('region_code', $get('buyer_employment.employer.address.region'))
+////                                                    ->where('province_code', $get('buyer.address.present.province'))                                            ->where('province_code', $get('province'))
+//                                    ->where('city_municipality_code', $get('buyer_employment.employer.address.city'))
+//                                    ->pluck('barangay_description', 'barangay_code')
+//                                )
+//                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') == 'PH')
+//                                ->hidden(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH'&&$get('buyer_employment.employer.address.country')!=null)
+//                                ->native(false)
+//                                ->live(),
+//                            TextInput::make('buyer_employment.employer.address.address')
+//                                ->label(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
+//                                ->placeholder(fn(Get $get)=>$get('buyer_employment.employer.address.country')!='PH'?'Full Address':'Unit Number, House/Building/Street No, Street Name')
+//                                ->required(fn(Get $get):bool => $get('buyer_employment.employer.address.country') != 'PH')
+//                                ->autocapitalize('words')
+//                                ->maxLength(255)
+//                                ->live(),
+//                        ]),
 
                         Forms\Components\Fieldset::make('Spouse Personal')->schema([
                             TextInput::make('spouse.last_name')
@@ -1215,6 +1252,7 @@ class ClientInformationSheet extends Component implements HasForms
                                 ->native(false),
                             Select::make('spouse.nationality')
                                 ->label('Nationality')
+                                ->searchable()
                                 ->required()
                                 ->native(false)
                                 ->options(Nationality::all()->pluck('description','code')),
@@ -1254,24 +1292,24 @@ class ClientInformationSheet extends Component implements HasForms
                             Forms\Components\TextInput::make('spouse.landline')
                                 ->label('Landline'),
                         ])->hidden(fn (Get $get): bool => $get('buyer.civil_status')!=CivilStatus::where('description','Married')->first()->code &&  $get('buyer.civil_status')!=null),
-                        Forms\Components\Fieldset::make('Documents')
-                            ->schema([
-                                FileUpload::make('valid_id')
-                                    ->label('Valid ID')
-                                    ->required(),
-                                FileUpload::make('payslip')
-                                    ->label('Latest 1 month payslip')
-                                    ->required(),
-                            ]),
-                        Forms\Components\Fieldset::make('Project')
-                            ->schema([
-                                Select::make('preferred_project')
-                                    ->live()
-                                    ->label('Preferred Project')
-                                    ->required()
-                                    ->native(false)
-                                    ->options(Project::all()->pluck('description','code')),
-                            ])->columnSpanFull(),
+//                        Forms\Components\Fieldset::make('Documents')
+//                            ->schema([
+//                                FileUpload::make('valid_id')
+//                                    ->label('Valid ID')
+//                                    ->required(),
+//                                FileUpload::make('payslip')
+//                                    ->label('Latest 1 month payslip')
+//                                    ->required(),
+//                            ]),
+//                        Forms\Components\Fieldset::make('Project')
+//                            ->schema([
+//                                Select::make('preferred_project')
+//                                    ->live()
+//                                    ->label('Preferred Project')
+//                                    ->required()
+//                                    ->native(false)
+//                                    ->options(Project::all()->pluck('description','code')),
+//                            ])->columnSpanFull(),
                     ])->columnSpanFull()->columns(1)
                         ->visible(fn():bool => $this->screenSize === 'mobile' || $this->screenSize === 'mobile'),
                 //Mobile View End
