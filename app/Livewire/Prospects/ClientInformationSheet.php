@@ -14,6 +14,7 @@ use App\Models\PhilippineBarangay;
 use App\Models\PhilippineCity;
 use App\Models\PhilippineProvince;
 use App\Models\PhilippineRegion;
+use App\Models\Project;
 use App\Models\Prospects;
 use App\Models\Tenure;
 use App\Models\WorkIndustry;
@@ -595,7 +596,17 @@ class ClientInformationSheet extends Component implements HasForms
                                     FileUpload::make('payslip')
                                         ->label('Latest 1 month payslip')
                                         ->required(),
-                                ])->columns(1)
+                                ])->columns(1),
+                            Forms\Components\Fieldset::make('Project')
+                                ->schema([
+                                    Select::make('preferred_project')
+                                        ->live()
+                                        ->label('Preferred Project')
+                                        ->required()
+                                        ->native(false)
+                                        ->options(Project::all()->pluck('description','code'))
+                                        ->columnSpan(3),
+                                ])->columnSpanFull()->columns(12),
                         ]),
                         //Spouse
                         Forms\Components\Tabs\Tab::make('Spouse')->schema([
@@ -1251,7 +1262,16 @@ class ClientInformationSheet extends Component implements HasForms
                                 FileUpload::make('payslip')
                                     ->label('Latest 1 month payslip')
                                     ->required(),
-                            ])
+                            ]),
+                        Forms\Components\Fieldset::make('Project')
+                            ->schema([
+                                Select::make('preferred_project')
+                                    ->live()
+                                    ->label('Preferred Project')
+                                    ->required()
+                                    ->native(false)
+                                    ->options(Project::all()->pluck('description','code')),
+                            ])->columnSpanFull(),
                     ])->columnSpanFull()->columns(1)
                         ->visible(fn():bool => $this->screenSize === 'mobile' || $this->screenSize === 'mobile'),
                 //Mobile View End
@@ -1407,6 +1427,7 @@ class ClientInformationSheet extends Component implements HasForms
         $contact->payslipImage = config('app.url') . '/' . $data['payslip'];
         $contact->save();
         $this->record->contact_id=$contact->id;
+        $this->record->preferred_project =$data['preferred_project'];
         $this->record->save();
         $this->dispatch('open-modal', id: 'success-modal');
     }

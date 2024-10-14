@@ -811,16 +811,20 @@ class ProspectsResource extends Resource
                                 Placeholder::make('prospect_id')
                                     ->label('Prospect ID')
                                     ->content(fn($record)=>$record->prospect_id??''),
+                                Placeholder::make('')
+                                    ->label('Preferred Project')
+                                    ->content(fn($record)=>$record->preferredProject->description??'')
+                                    ->hiddenOn('create'),
                                 Placeholder::make('IdImage')
                                     ->label('Valid Id')
                                     ->content(fn($record) =>$record->contact==null|| $record->contact->getFirstMediaUrl('id-images') ==''?'No File Found': new HtmlString(
                                         '<a href="' . $record->contact->getFirstMediaUrl('id-images') . '" target="_blank">View Valid Id</a>'
-                                    )),
+                                    ))->hiddenOn('create'),
                                 Placeholder::make('payslipImage')
                                     ->label('Payslip')
                                     ->content(fn($record) =>$record->contact==null || $record->contact->getFirstMediaUrl('payslip-images') ==''?'No File Found':  new HtmlString(
                                         '<a href="' . $record->contact->getFirstMediaUrl('payslip-images') . '" target="_blank">View Payslip</a>'
-                                    )),
+                                    ))->hiddenOn('create'),
                                 Placeholder::make('created_at')
                                     ->content(fn ($record) => $record?->created_at?->diffForHumans() ?? new HtmlString('&mdash;')),
                                 Placeholder::make('updated_at')
