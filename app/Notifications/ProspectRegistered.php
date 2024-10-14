@@ -36,15 +36,12 @@ class ProspectRegistered extends Notification
     {
         return (new MailMessage)
             ->subject('Registration Successful')
-            ->greeting('Hello ' . $this->prospect->first_name . '!')
-            ->line('Thank you for registering with us.')
-            ->line('Here are your details:')
+            ->greeting('Mabuhay! ' . $this->prospect->first_name . '!')
+            ->line('Natanggap na namin ang iyong impormasyon.')
             ->line('Name: ' . $this->prospect->first_name . ' ' . $this->prospect->last_name)
             ->line('Company: ' . $this->prospect->company)
             ->line('Position: ' . $this->prospect->position_title)
-            ->line('We will be in touch with you soon!')
-            ->action('Fill Up Your Information Sheet', route('client-information-sheet', $this->prospect->id))
-            ->line('Thank you for using our application!');
+            ->line('Maraming salamat sa iyong pagtugon.');
     }
 
     /**
