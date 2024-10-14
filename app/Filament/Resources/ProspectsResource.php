@@ -624,7 +624,7 @@ class ProspectsResource extends Resource
                                                     })
                                                     ->columnSpan(3),
                                                 Select::make('buyer_employment.employer.address.locality')
-                                                    ->label('locality')
+                                                    ->label('City')
                                                     ->searchable()
                                                     ->options(fn (Get $get): Collection => PhilippineCity::query()
                                                         ->where('province_code', $get('buyer_employment.employer.address.administrative_area'))
@@ -638,7 +638,7 @@ class ProspectsResource extends Resource
                                                     })
                                                     ->columnSpan(3),
                                                 Select::make('buyer_employment.employer.address.sublocality')
-                                                    ->label('sublocality')
+                                                    ->label('Barangay')
                                                     ->searchable()
                                                     ->options(fn (Get $get): Collection =>PhilippineBarangay::query()
                                                         ->where('region_code', $get('buyer_employment.employer.address.region'))
