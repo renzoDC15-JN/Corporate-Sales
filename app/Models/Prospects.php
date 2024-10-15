@@ -35,6 +35,16 @@ class Prospects extends Model implements HasMedia
         'mobile_number',
         'preferred_project',
         'contact_id',
+        'employee_id_number',
+        'has_pagibig_number',
+        'pagibig_id',
+        'civil_status_code',
+        'gender_code',
+        'date_of_birth',
+        'ownership_code',
+        'rent_amount',
+        'employment_status',
+        'employment_tenure'
 //        'idImage',
 //        'payslipImage'
     ];

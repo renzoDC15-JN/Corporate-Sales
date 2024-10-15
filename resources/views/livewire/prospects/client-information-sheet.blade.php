@@ -29,8 +29,6 @@
         width="md"
         class="rounded-md"
         :autofocus="false"
-        :close-button="false"
-        :close-by-escaping="false"
         :close-by-clicking-away="false">
         <x-slot name="heading">
             Client Information Sheet

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 //Route::get('pre-register', function(){
 //    return view('pre-register-landing');
 //});
-//Route::get('pre-register',\App\Livewire\Prospects\CreateProspects::class);
+//Route::get('pre-register/{company}',\App\Livewire\Prospects\CreateProspects::class);
 //Route::get('pre-register/{company}',\App\Livewire\Prospects\CreateProspects::class);
 ////Route::get('client-information-sheet/{prospect}', ClientInformationSheet::class)->name('client-information-sheet');
 

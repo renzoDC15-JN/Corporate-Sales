@@ -55,7 +55,6 @@ class ProspectsResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-
             ->schema([
                 Forms\Components\Tabs::make()
                     ->persistTabInQueryString()
