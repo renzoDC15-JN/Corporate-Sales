@@ -53,9 +53,11 @@ class ClientInformationSheet extends Component implements HasForms
 
     public $company;
     public $error='';
-    public function mount(String $company): void
+    public $location;
+    public function mount(String $location,String $company): void
     {
         $this->company=$company;
+        $this->location=$location;
         $this->form->fill();
     }
 
@@ -1092,6 +1094,7 @@ class ClientInformationSheet extends Component implements HasForms
                 'employment_tenure' => $data['employment_tenure'],
                 'salary' => $data['salary'],
                 'employee_id_number' => $data['employee_id_number'],
+                'location'=>$this->location,
             ]);
 
             $this->dispatch('open-modal', id: 'success-modal');

@@ -44,7 +44,8 @@ class Prospects extends Model implements HasMedia
         'ownership_code',
         'rent_amount',
         'employment_status',
-        'employment_tenure'
+        'employment_tenure',
+        'location'
 //        'idImage',
 //        'payslipImage'
     ];

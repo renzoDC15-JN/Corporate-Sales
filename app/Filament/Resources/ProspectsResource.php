@@ -226,6 +226,9 @@ class ProspectsResource extends Resource
                                 Placeholder::make('prospect_id')
                                     ->label('Prospect ID')
                                     ->content(fn($record)=>$record->prospect_id??''),
+                                Placeholder::make('location')
+                                    ->label('Location')
+                                    ->content(fn($record)=>$record->location??''),
 //                                Placeholder::make('')
 //                                    ->label('Preferred Project')
 //                                    ->content(fn($record)=>$record->preferredProject->description??'')
