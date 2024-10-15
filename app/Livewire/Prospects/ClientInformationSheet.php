@@ -36,6 +36,7 @@ use Filament\Forms\Set;
 use Homeful\Contacts\Actions\PersistContactAction;
 use Homeful\Contacts\Models\Contact;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -51,7 +52,7 @@ class ClientInformationSheet extends Component implements HasForms
     public string $screenSize=''; // Default value is 'desktop'
 
     public $company;
-
+    public $error='';
     public function mount(String $company): void
     {
         $this->company=$company;
@@ -1067,36 +1068,47 @@ class ClientInformationSheet extends Component implements HasForms
             ->statePath('data');
     }
 
-    public function save():void
+    public function save(): void
     {
-        $data = $this->form->getState();
-        $record =Prospects::create([
-             'company'=>$this->company,
-             'first_name'=>$data['first_name'],
-             'middle_name'=>$data['middle_name'],
-             'last_name'=>$data['last_name'],
-             'civil_status_code'=>$data['civil_status_code'],
-             'gender_code'=>$data['gender_code'],
-             'date_of_birth'=>$data['date_of_birth'],
-             'ownership_code'=>$data['ownership_code'],
-             'rent_amount'=>$data['rent_amount'] ?? null,
-             'has_pagibig_number'=>$data['has_pagibig_number'],
-             'mid'=>$data['mid']??null,
-             'hloan'=>$data['hloan']??null,
-             'email'=>$data['email'],
-             'mobile_number'=>$data['mobile'],
-             'employment_status'=>$data['employment_status'],
-             'employment_tenure'=>$data['employment_tenure'],
-             'salary'=> $data['salary'],
-             'employee_id_number'=>$data['employee_id_number'],
-        ]);
+        try {
+            $data = $this->form->getState();
 
-        $this->dispatch('open-modal', id: 'success-modal');
-        $record->notify(new ProspectRegistered($record));
+            $record = Prospects::create([
+                'company' => $this->company,
+                'first_name' => $data['first_name'],
+                'middle_name' => $data['middle_name'],
+                'last_name' => $data['last_name'],
+                'civil_status_code' => $data['civil_status_code'],
+                'gender_code' => $data['gender_code'],
+                'date_of_birth' => $data['date_of_birth'],
+                'ownership_code' => $data['ownership_code'],
+                'rent_amount' => $data['rent_amount'] ?? null,
+                'has_pagibig_number' => $data['has_pagibig_number'],
+                'mid' => $data['mid'] ?? null,
+                'hloan' => $data['hloan'] ?? null,
+                'email' => $data['email'],
+                'mobile_number' => $data['mobile'],
+                'employment_status' => $data['employment_status'],
+                'employment_tenure' => $data['employment_tenure'],
+                'salary' => $data['salary'],
+                'employee_id_number' => $data['employee_id_number'],
+            ]);
 
-        $this->form->model($record)->saveRelationships();
-        $this->data=[];
+            $this->dispatch('open-modal', id: 'success-modal');
+            $record->notify(new ProspectRegistered($record));
+
+            $this->form->model($record)->saveRelationships();
+            $this->data = [];
+        } catch (\Exception $e) {
+            // Handle the exception, log it if necessary
+            Log::error('Error saving prospect: ' . $e->getMessage());
+            $this->error=$e->getMessage();
+            $this->dispatch('open-modal', id: 'error-modal');
+            // Optionally, you can rethrow the exception or handle specific cases
+//            throw $e;
+        }
     }
+
 
 //    public function save(): void
 //    {

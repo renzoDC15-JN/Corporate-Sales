@@ -41,6 +41,26 @@
         </div>
     </x-filament::modal>
 
+    <x-filament::modal
+        id="error-modal"
+        icon="heroicon-o-check-circle"
+        icon-color="danger"
+        sticky-header
+        width="md"
+        class="rounded-md"
+        :autofocus="false"
+        :close-by-clicking-away="false">
+        <x-slot name="heading">
+            Error
+        </x-slot>
+        <x-slot name="description">
+            Please check this error message!
+        </x-slot>
+        <div class="px-4 py-2 ">
+            {{$this->error}}
+        </div>
+    </x-filament::modal>
+
 </div>
 <script>
 
